@@ -1,7 +1,14 @@
 import Vue from "vue";
 import { extend, localize } from "vee-validate";
-import { required, email, min } from "vee-validate/dist/rules";
-
+import {
+  required,
+  email,
+  min,
+  length,
+  max,
+  name,
+} from "vee-validate/dist/rules";
+import zh from "vee-validate/dist/locale/zh_CN.json";
 // Install required rule.
 extend("required", required);
 
@@ -10,32 +17,47 @@ extend("email", email);
 
 // Install min rule.
 extend("min", min);
+extend("length", length);
+extend("max", max);
+
+extend("name", {
+  validate: (value) => {
+    return !/^\d+/.test(value);
+  },
+  message: "昵称不能以数字开头",
+});
 
 // Install English and Arabic localizations.
-localize({
-  cn: {
-    messages: {
-      required: (field) => "请输入" + field,
-      email: "请输入正确的邮箱",
+localize("zh_CN", {
+  messages: {
+    ...zh.messages,
+    required: (field) => "请输入" + field,
+  },
+  names: {
+    email: "邮箱",
+    password: "密码",
+    code: "验证码",
+    username: "用户名",
+    name: "昵称",
+  },
+  fields: {
+    password: {
+      min: "密码不能小于6位",
     },
-    names: {
-      email: "邮箱",
-      password: "密码",
-      code: "验证码",
-      username: "用户名",
+    catalog: {
+      is_not: "请选择{_field_}",
     },
-    fields: {
-      password: {
-        min: "密码不能小于6位",
-      },
-      code: {
-        min: "验证码错误",
+    email: {
+      email: "请输入正确的{_field_}",
+      required: "请输入{_field_}",
+    },
+    name: {
+      min: (field, { length }) => {
+        return `请在${field}输入至少${length}个字符`;
       },
     },
   },
 });
-
-let LOCALE = "cn";
 
 // A simple get/set interface to manage our locale in components.
 // This is not reactive, so don't create any computed properties/watchers off it.
@@ -49,4 +71,3 @@ Object.defineProperty(Vue.prototype, "locale", {
     localize(val);
   },
 });
-Vue.prototype.locale = "cn";

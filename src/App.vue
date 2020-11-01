@@ -1,137 +1,148 @@
 <template>
   <div id="app">
-    <div class="layui-container layui-form-pane">
-      <ValidationObserver ref="form" class="layui-form">
-        <div class="layui-form-item">
-          <label class="layui-form-label"> 用户名 </label>
-          <div class="layui-input-inline">
-            <ValidationProvider
-              name="username"
-              rules="required|email"
-              v-slot="{ errors }"
-            >
-              <input
-                type="text"
-                v-model="username"
-                class="layui-input"
-                placeholder="请输入用户名"
-              />
-              <span class="error-tip">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">密码</label>
-          <div class="layui-input-inline">
-            <ValidationProvider
-              name="password"
-              rules="required|min:6"
-              v-slot="{ errors }"
-            >
-              <input
-                type="password"
-                name="password"
-                v-model="password"
-                placeholder="请输入密码"
-                class="layui-input"
-              />
-              <span class="error-tip">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
-          <div class="layui-form-mid layui-word-aux">辅助文字</div>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">验证码</label>
-          <div class="layui-input-inline">
-            <ValidationProvider
-              name="code"
-              rules="required|min:4"
-              v-slot="{ errors }"
-            >
-              <input
-                v-model="code"
-                type="verification"
-                name="verification"
-                placeholder="请输入验证码"
-                class="layui-input"
-                vee-validate="'required|code'"
-              />
-              <span class="error-tip">{{ errors[0] }}</span>
-            </ValidationProvider>
-          </div>
-          <div
-            v-html="svg"
-            @click="getCaptcha"
-            class="layui-form-mid layui-word-aux svg"
-          ></div>
-        </div>
-        <button type="button" class="layui-btn">点击登录</button>
-        <a class="btn-link layui-btn" href="">忘记密码</a> </ValidationObserver
-      ><button @click="switchLoc">Switch Locale</button>
-    </div>
+    <imooc-header></imooc-header>
+    <imooc-panel></imooc-panel>
+    <router-view></router-view>
+    <imooc-footer></imooc-footer>
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import { ValidationProvider, ValidationObserver } from "vee-validate";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
+import Panel from "@/components/Panel.vue";
 export default {
   name: "app",
   components: {
-    ValidationProvider,
-    ValidationObserver,
-  },
-  data() {
-    return {
-      svg: "",
-      username: "",
-      password: "",
-      code: "",
-    };
-  },
-  mounted() {
-    this.getCaptcha();
-    // this.locale = "cn";
-    // this.$refs.form.validate();
-  },
-  methods: {
-    switchLoc() {},
-    getCaptcha() {
-      axios.get("http://localhost:3000/demo").then((res) => {
-        if (res.status === 200) {
-          const obj = res.data;
-          if (obj.code === 200) {
-            this.svg = obj.data;
-          }
-        }
-      });
-    },
+    "imooc-header": Header,
+    "imooc-footer": Footer,
+    "imooc-panel": Panel,
   },
 };
 </script>
 
 <style lang="scss">
-.layui-container {
-  padding: 30px 0 10px 0px;
-  width: 500px;
-  margin: 100px auto 0;
+@import "assets/css/global.css";
+@import "assets/css/layui-layer/layer.css";
+// 公用样式
+.svg {
+  position: absolute;
+  svg {
+    position: absolute;
+    top: -10px;
+  }
 }
 
-.layui-form-item:nth-child(4) {
-  position: relative;
+.gray {
+  color: #999;
+}
+
+.orange {
+  color: #ff5722;
+}
+
+.pull-right {
+  float: right !important;
+}
+
+@for $i from 0 to 5 {
+  .pd#{$i} {
+    padding: $i * 10 + px !important;
+  }
+  .pt#{$i} {
+    padding-top: $i * 10 + px !important;
+  }
+  .pl#{$i} {
+    padding-left: $i * 10 + px !important;
+  }
+  .pr#{$i} {
+    padding-right: $i * 10 + px !important;
+  }
+  .pb#{$i} {
+    padding-bottom: $i * 10 + px !important;
+  }
+  .mr#{$i} {
+    margin-right: $i * 10 + px !important;
+  }
+  .mt#{$i} {
+    margin-top: $i * 10 + px !important;
+  }
+  .ml#{$i} {
+    margin-left: $i * 10 + px !important;
+  }
+}
+
+.mt20 {
+  margin-top: -20px;
+}
+
+.text-center {
   text-align: center;
 }
-
-.layui-btn {
-  width: 100px;
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
 }
 
-.error-tip {
-  color: red;
+.d-hide {
+  position: absolute;
+  overflow: hidden;
+  height: 0;
 }
 
-.svg {
-  position: relative;
-  top: -15px;
+.d-flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  &.flex-start {
+    justify-content: flex-start;
+  }
+  &.flex-end {
+    justify-content: flex-end;
+  }
+  &.flex-center {
+    justify-content: center;
+  }
+}
+
+.link {
+  color: #01aaed;
+}
+.success {
+  color: #5fb878;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes bounceOut {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+
+.fade-leave-active {
+  animation: bounceOut 0.3s;
+}
+
+.fade-enter-active,
+.fade-enter-to {
+  animation: bounceIn 0.3s;
 }
 </style>
